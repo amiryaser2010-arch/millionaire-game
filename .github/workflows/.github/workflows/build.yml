@@ -25,19 +25,4 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Setup Android SDK
-        run: |
-          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)
-          "$SDKMANAGER" --install "platform-tools" "platforms;android-35" "build-tools;35.0.0"
-
-      - name: Prepare game
-        run: |
-          mkdir -p www
-          cp index.html www/index.html
-          npm init -y
-          npm install @capacitor/core@7 @capacitor/android@7
-          npm install --save-dev @capacitor/cli@7
-          npx cap init "Millionaire Game" com.amiryaser2010.millionaire --web-dir=www
-          npx cap add android
-          npx cap sync android
 
