@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>من سيربح المليون</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(145deg,#030b2c,#102c65);color:white;font-family:Arial;text-align:center;min-height:100vh}
+header{padding:20px;color:#ffd54a;font-size:27px;font-weight:bold}
+.money{margin:10px auto;color:#ffe477;font-size:20px}
+#question{margin:25px 15px;padding:22px;background:#102b60;border:2px solid #e9bd43;border-radius:18px;font-size:22px;min-height:100px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:15px}
+button{border:2px solid #e7bd45;border-radius:30px;background:#103c79;color:white;padding:16px 8px;font-size:17px;cursor:pointer;transition:.2s}
+button:active{transform:scale(.94)}
+button:disabled{opacity:.6}
+button:hover{background:#205ba0}
+.tools{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:10px}
+.tools button{background:#563d9a}
+#message{font-size:20px;color:#ffe477;min-height:35px;padding:8px}
+#start{background:#bd8b19;color:#07183d;font-weight:bold;font-size:22px;margin:20px}
+#ladder{padding:12px;color:#ffe477;font-size:15px}
+#ladder span{display:inline-block;padding:5px}
+.active{background:#a56c12;border-radius:8px}
+#restart{display:none;margin:15px auto;background:#178c58}
+</style>
+</head>
+<body>
+<header>🏆 من سيربح المليون؟</header>
+<div class="money" id="money">الجائزة: 0 جنيه</div>
+<div id="ladder">15: مليون | 14: 500 ألف | 13: 250 ألف | 12: 125 ألف | 11: 64 ألف</div>
+<div id="question">هل أنت مستعد لتصبح مليونيراً؟</div>
+<div class="answers" id="answers"></div>
+<div id="message">اضغط ابدأ للعب!</div>
+<button id="start" onclick="startGame()">ابدأ اللعبة 🎮</button>
+<div class="tools">
+<button onclick="fifty()">50:50</button>
+<button onclick="audience()">رأي الجمهور 👥</button>
+<button onclick="phone()">اتصال بصديق 📞</button>
+</div>
+<button id="restart" onclick="startGame()">العب مرة أخرى 🔄</button>
+<script>
+const questions=[
+["ما عاصمة مصر؟",["القاهرة","الإسكندرية","أسوان","طنطا"],0],
+["كم عدد أيام الأسبوع؟",["خمسة","ستة","سبعة","ثمانية"],2],
+["ما أكبر كوكب في المجموعة الشمسية؟",["الأرض","المشتري","المريخ","الزهرة"],1],
+["ما الحيوان الملقب بملك الغابة؟",["الفيل","النمر","الأسد","الذئب"],2],
+["كم عدد ألوان قوس قزح؟",["خمسة","ستة","سبعة","ثمانية"],2],
+["ما أسرع حيوان بري؟",["الأسد","الفهد","الحصان","الغزال"],1],
+["ما الكوكب الأحمر؟",["زحل","عطارد","المريخ","نبتون"],2],
+["ما أكبر محيط في العالم؟",["الأطلسي","الهندي","الهادئ","المتجمد"],2],
+["كم ضلعاً للمثلث؟",["اثنان","ثلاثة","أربعة","خمسة"],1],
+["من مخترع المصباح الكهربائي الشهير؟",["نيوتن","أديسون","أينشتاين","غراهام بل"],1],
+["ما اللغة الرسمية في البرازيل؟",["الإسبانية","البرتغالية","الفرنسية","الإنجليزية"],1],
+["كم عدد قارات العالم؟",["خمسة","ستة","سبعة","ثمانية"],2],
+["ما العنصر الذي رمزه O؟",["الذهب","الأكسجين","الحديد","الفضة"],1],
+["في أي قارة تقع اليابان؟",["أفريقيا","أوروبا","آسيا","أمريكا"],2],
+["كم يساوي 12 × 12؟",["124","132","144","154"],2]
+];
+let index=0,prize=0,used=[];
+const prizes=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
+function startGame(){
+index=0;prize=0;used=[];
+document.getElementById("start").style.display="none";
+document.getElementById("restart").style.display="none";
+document.getElementById("message").textContent="بالتوفيق! اختر الإجابة الصحيحة";
+showQuestion();
+}
+function showQuestion(){
+let q=questions[index];
+document.getElementById("question").textContent="السؤال "+(index+1)+": "+q[0];
+document.getElementById("money").textContent="الجائزة التالية: "+prizes[index].toLocaleString("en-US")+" جنيه";
+let a=document.getElementById("answers");a.innerHTML="";
+q[1].forEach((v,i)=>{
+let b=document.createElement("button");
+b.textContent=String.fromCharCode(65+i)+" - "+v;
+b.onclick=()=>answer(i);
+a.appendChild(b);
+});
+document.getElementById("message").textContent="اختر إجابتك";
+}
+function answer(n){
+let correct=questions[index][2];
+let buttons=document.querySelectorAll("#answers button");
+buttons.forEach(b=>b.disabled=true);
+if(n===correct){
+buttons[n].style.background="#168b4b";
+prize=prizes[index];
+document.getElementById("message").textContent="🎉 إجابة صحيحة! أحسنت!";
+setTimeout(()=>{
+index++;
+if(index===15)endGame(true);
+else showQuestion();
+},1100);
+}else{
+buttons[n].style.background="#bd263d";
+buttons[correct].style.background="#168b4b";
+document.getElementById("message").textContent="❌ إجابة خاطئة! انتهت اللعبة.";
+setTimeout(()=>endGame(false),1300);
+}
+}
+function fifty(){
+if(index>=15||used.includes("50"))return;
+used.push("50");
+let correct=questions[index][2],wrong=[];
+questions[index][1].forEach((v,i)=>{if(i!==correct)wrong.push(i)});
+wrong.sort(()=>Math.random()-.5);
+let buttons=document.querySelectorAll("#answers button");
+wrong.slice(0,2).forEach(i=>buttons[i].style.visibility="hidden");
+}
+function audience(){
+if(index>=15||used.includes("aud"))return;
+used.push("aud");
+let c=questions[index][2];
+let p=[10,15,10,10];p[c]=65;
+alert("📊 تصويت الجمهور:\n"+questions[index][1].map((v,i)=>v+": "+p[i]+"%").join("\n"));
+}
+function phone(){
+if(index>=15||used.includes("phone"))return;
+used.push("phone");
+alert("📞 صديقك يقول: أعتقد أن الإجابة هي: "+questions[index][1][questions[index][2]]);
+}
+function endGame(win){
+document.getElementById("question").textContent=win?"🏆 مبروك! أنت مليونير!":"انتهت المسابقة!";
+document.getElementById("answers").innerHTML="";
+document.getElementById("money").textContent="مجموع أرباحك: "+prize.toLocaleString("en-US")+" جنيه";
+document.getElementById("message").textContent=win?"🎊 أحسنت! لقد فزت بالمليون!":"حاول مرة أخرى وستنجح!";
+document.getElementById("restart").style.display="block";
+}
+</script>
+</body>
+</html>
